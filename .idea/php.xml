@@ -100,6 +100,8 @@
       <path value="$PROJECT_DIR$/vendor/tebru/retrofit-php-http-guzzle6" />
       <path value="$PROJECT_DIR$/vendor/tebru/php-type" />
       <path value="$PROJECT_DIR$/vendor/sensio/framework-extra-bundle" />
+      <path value="$PROJECT_DIR$/vendor/tebru/gson-php" />
+      <path value="$PROJECT_DIR$/vendor/tebru/retrofit-php-converter-gson" />
     </include_path>
   </component>
   <component name="PhpProjectSharedConfiguration" php_language_level="7.1" />
