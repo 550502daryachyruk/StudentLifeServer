@@ -22,6 +22,19 @@ class User
     private $id;
 
     /**
+     * @ORM\ManyToMany(targetEntity="League", inversedBy="admins")
+     * @ORM\JoinTable(name="user_league1")
+     */
+    private $leaguesWhereAdmin;
+    /**
+     * @ORM\ManyToMany(targetEntity="League", inversedBy="users")
+     */
+    private $leaguesWhereUser;
+
+    private $alreadyPlayedEvent;
+
+    private $willBePlayedEvent;
+    /**
      * @ORM\Column(type="string", length=16, unique=true)
      * @Assert\NotBlank( message="username_error")
      */
@@ -166,10 +179,34 @@ class User
     {
         $this->birthdayDate = $birthdayDate;
     }
+    public function getLeaguesWhereAdmin()
+    {
+        return $this->leaguesWhereAdmin;
+    }
+
+    /**
+     * @param mixed $leaguesWhereAdmin
+     */
+    public function setLeaguesWhereAdmin($leaguesWhereAdmin): void
+    {
+        $this->leaguesWhereAdmin = $leaguesWhereAdmin;
+    }
 
     /**
      * @return mixed
      */
+    public function getLeaguesWhereUser()
+    {
+        return $this->leaguesWhereUser;
+    }
+
+    /**
+     * @param mixed $leaguesWhereUser
+     */
+    public function setLeaguesWhereUser($leaguesWhereUser): void
+    {
+        $this->leaguesWhereUser = $leaguesWhereUser;
+    }
     public function getRegisterDate()
     {
         return $this->registerDate;
@@ -184,5 +221,4 @@ class User
     }
 
 
-    // add your own fields
 }
