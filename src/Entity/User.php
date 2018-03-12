@@ -34,6 +34,20 @@ class User
     private $alreadyPlayedEvent;
 
     private $willBePlayedEvent;
+
+
+    /**
+     * @ORM\Column(type="string", length=16)
+     * @Assert\NotBlank( message="firstname_error")
+     */
+    private $firstname;
+
+    /**
+     * @ORM\Column(type="string", length=16)
+     * @Assert\NotBlank( message="lastname_error")
+     */
+    private $lastname;
+
     /**
      * @ORM\Column(type="string", length=16, unique=true)
      * @Assert\NotBlank( message="username_error")
@@ -179,6 +193,7 @@ class User
     {
         $this->birthdayDate = $birthdayDate;
     }
+
     public function getLeaguesWhereAdmin()
     {
         return $this->leaguesWhereAdmin;
@@ -207,6 +222,7 @@ class User
     {
         $this->leaguesWhereUser = $leaguesWhereUser;
     }
+
     public function getRegisterDate()
     {
         return $this->registerDate;
@@ -218,6 +234,38 @@ class User
     public function setRegisterDate(): void
     {
         $this->registerDate = new \DateTime();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getFirstname()
+    {
+        return $this->firstname;
+    }
+
+    /**
+     * @param mixed $firstname
+     */
+    public function setFirstname($firstname): void
+    {
+        $this->firstname = $firstname;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getLastname()
+    {
+        return $this->lastname;
+    }
+
+    /**
+     * @param mixed $lastname
+     */
+    public function setLastname($lastname): void
+    {
+        $this->lastname = $lastname;
     }
 
 

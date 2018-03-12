@@ -86,12 +86,16 @@ class RetroController extends Controller
             $userManager = $em->getRepository(User::class);
 
             $user = new User();
+            $firstName = $request->query->get('firstname');
+            $lastName = $request->query->get('lastname');
             $userUsername = $request->query->get('username');
             $userEmail = $request->query->get('email');
             $userPassword = $request->query->get('password');
             $userSex = $request->query->get('sex');
             $userBirthday = \DateTime::createFromFormat('Y-m-d', $request->query->get('birthday'));
 
+            $user->setFirstname($firstName);
+            $user->setLastname($lastName);
             $user->setUsername($userUsername);
             $user->setEmail($userEmail);
             $user->setPassword($userPassword);
