@@ -16,6 +16,10 @@ class League
      */
     private $id;
 
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $name;
 
     /**
      * @ORM\OneToMany(targetEntity="League", mappedBy="parentLeague")
@@ -29,18 +33,17 @@ class League
 
 
     /**
-     * @ORM\ManyToMany(targetEntity="Product", mappedBy="categories")
+     *
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="leaguesWhereAdmin")
+     * @ORM\JoinTable(name="user_league1")
      */
     private $admins;
     /**
-     * @ORM\ManyToMany(targetEntity="Product", mappedBy="categories")
+     * @ORM\ManyToMany(targetEntity="User", mappedBy="leaguesWhereUser")
      */
     private $users;
 
     private $events;
-
-
-
 
 
     /**
@@ -113,6 +116,22 @@ class League
     public function setUsers($users): void
     {
         $this->users = $users;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
+
+    /**
+     * @param mixed $name
+     */
+    public function setName($name): void
+    {
+        $this->name = $name;
     }
 
 }

@@ -23,6 +23,7 @@ class User
 
     /**
      * @ORM\ManyToMany(targetEntity="League", inversedBy="admins")
+     * @ORM\JoinTable(name="user_league1")
      */
     private $leaguesWhereAdmin;
     /**
