@@ -43,6 +43,9 @@ class League
      */
     private $users;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Event", mappedBy="targetLeague")
+     */
     private $events;
 
 
@@ -132,6 +135,26 @@ class League
     public function setName($name): void
     {
         $this->name = $name;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEvents()
+    {
+        return $this->events;
+    }
+
+    /**
+     * @param mixed $events
+     */
+    public function setEvents($events): void
+    {
+        $this->events = $events;
+    }
+    public function __construct()
+    {
+        $this->events = new ArrayCollection();
     }
 
 }

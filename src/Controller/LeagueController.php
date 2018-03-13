@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\Entity\League;
 use App\Entity\User;
+use Symfony\Component\DependencyInjection\Tests\Compiler\J;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -58,7 +60,6 @@ class LeagueController extends Controller
             $leagues = $user->getLeaguesWhereUser();
             $massive = [];
             $massive1 = [];
-
             //   var_dump($leagues);
             foreach($leagues as $league){
                 //var_dump($league);
@@ -67,16 +68,33 @@ class LeagueController extends Controller
             }
         //    var_dump($this->json($massive));
             return $this->json(["indexes" => $massive, "names" => $massive1]);
-
-
         }
         else{
             return $this->json("Nothing");
-
         }
-
-
     }
 
-
+    /**
+     * @Route("/api/getListOfEvent/")
+     */
+    public function getListOfEvent(Request $request)
+    {
+        $id = $request->request->get('leagueId');
+        if($id != null)
+        {
+            $em = $this->getDoctrine()->getManager();
+            $league = $em->getRepository(League::class)->find($id);
+            $events = $league->getEvents();
+            $descriptions = [];
+            $indexes = [];
+            foreach($events as $event){
+                $descriptions[] = $event->getDescription();
+                $indexes[] = $event->getId();
+            }
+            return new JsonResponse(array('index'=>$descriptions,'description'=>$indexes));
+        }
+        else{
+            return new JsonResponse('Nothing');
+        }
+    }
 }

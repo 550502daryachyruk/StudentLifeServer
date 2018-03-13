@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\User;
 use App\Form\UserFormType;
+use Couchbase\Document;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -93,8 +94,18 @@ class RetroController extends Controller
             $userPassword = $request->query->get('password');
             $userSex = $request->query->get('sex');
             $userBirthday = \DateTime::createFromFormat('Y-m-d', $request->query->get('birthday'));
-            $userImage = $request->files->get('attachment');
-
+            $userImage = $request->get('attachment');
+            if(!$userImage) {
+                $user->setAvatarImage($this->getParameter('brochures_directory')."/default.jpg");
+            }
+            else{
+                $fileName = $this->generateUniqueFileName() . '.' . $userImage->guessExtension();
+                $userImage->move(
+                    $this->getParameter('brochures_directory'),
+                    $fileName
+                );
+                $user->setAvatarImage($fileName);
+            }
             $user->setFirstname($firstName);
             $user->setLastname($lastName);
             $user->setUsername($userUsername);
@@ -102,15 +113,6 @@ class RetroController extends Controller
             $user->setPassword($userPassword);
             $user->setSex($userSex);
             $user->setBirthdayDate($userBirthday);
-
-            //var_dump($file);
-            $fileName = $this->generateUniqueFileName() . '.' . $userImage->guessExtension();
-
-            $userImage->move(
-                $this->getParameter('brochures_directory'),
-                $fileName
-            );
-            $user->setAvatarImage($fileName);
 
             $errors = $validator->validate($user);
 
