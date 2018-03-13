@@ -31,6 +31,9 @@ class User
      */
     private $leaguesWhereUser;
 
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="targetUsers")
+     */
     private $alreadyPlayedEvent;
 
     private $willBePlayedEvent;
@@ -69,7 +72,7 @@ class User
 
     /**
      * @ORM\Column(type="boolean")
-     *
+     * @Assert\NotBlank(message="sex_error")
      */
     private $sex;    //if true = male
 
@@ -268,5 +271,23 @@ class User
         $this->lastname = $lastname;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getAlreadyPlayedEvent()
+    {
+        return $this->alreadyPlayedEvent;
+    }
+
+    /**
+     * @param mixed $alreadyPlayedEvent
+     */
+    public function setAlreadyPlayedEvent($alreadyPlayedEvent): void
+    {
+        $this->alreadyPlayedEvent = $alreadyPlayedEvent;
+    }
+    public function __construct() {
+        $this->alreadyPlayedEvent = new \Doctrine\Common\Collections\ArrayCollection();
+    }
 
 }

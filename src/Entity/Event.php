@@ -24,6 +24,12 @@ class Event
     private $targetLeague;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="alreadyPlayedEvent")
+     *
+     */
+    private $targetUsers;
+
+    /**
      * @ORM\Column(type="string")
      */
     private $description;
@@ -76,5 +82,23 @@ class Event
         $this->description = $description;
     }
 
+    /**
+     * @return mixed
+     */
+    public function getTargetUsers()
+    {
+        return $this->targetUsers;
+    }
+
+    /**
+     * @param mixed $targetUsers
+     */
+    public function setTargetUsers($targetUsers): void
+    {
+        $this->targetUsers = $targetUsers;
+    }
+    public function __construct() {
+        $this->targetUsers = new \Doctrine\Common\Collections\ArrayCollection();
+    }
     // add your own fields
 }

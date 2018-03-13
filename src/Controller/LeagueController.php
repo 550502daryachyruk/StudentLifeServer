@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use App\Entity\League;
 use App\Entity\User;
-use Symfony\Component\DependencyInjection\Tests\Compiler\J;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
@@ -22,22 +21,19 @@ class LeagueController extends Controller
 
         $parentLeague = $request->query->get('parentLeague');
         var_dump($parentLeague);
-        if($parentLeague != null)
-        {
+        if ($parentLeague != null) {
             $nameOfLeague = $request->query->get('nameOfLeague');
             $description = $request->query->get('description');
 //            $file = $request->files->get ( 'photo' );
 //            $fileName = md5 ( uniqid () ) . '.' . $file->guessExtension ();
-            if($nameOfLeague != null && $description != null)
-            {
+            if ($nameOfLeague != null && $description != null) {
                 $em = $this->getDoctrine()->getManager();
-                $league  = new League();
+                $league = new League();
                 $league->setAdmins([$this->getUser()]);
                 $league->setParentLeague($em->getRepository(League::class)->findOneBy(["name" => $parentLeague]));
                 return new Response('create');
             }
             return new Response('if');
-
         }
         return new Response('test');
 
@@ -53,23 +49,21 @@ class LeagueController extends Controller
 
         $id = $request->request->get('userId');
         //$id = $request->query->get('userId');
-        if($id != null)
-        {
+        if ($id != null) {
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($id);
             $leagues = $user->getLeaguesWhereUser();
             $massive = [];
             $massive1 = [];
             //   var_dump($leagues);
-            foreach($leagues as $league){
+            foreach ($leagues as $league) {
                 //var_dump($league);
                 $massive[] = $league->getId();
                 $massive1[] = $league->getName();
             }
-        //    var_dump($this->json($massive));
+            //    var_dump($this->json($massive));
             return $this->json(["indexes" => $massive, "names" => $massive1]);
-        }
-        else{
+        } else {
             return $this->json("Nothing");
         }
     }
@@ -79,21 +73,52 @@ class LeagueController extends Controller
      */
     public function getListOfEvent(Request $request)
     {
-        $id = $request->request->get('leagueId');
-        if($id != null)
-        {
+        if ($request->request->get('leagueId')) {
+            $id = $request->request->get('leagueId');
+        }
+        if ($request->query->get('leagueId')) {
+            $id = $request->query->get('leagueId');
+        }
+        if ($id != null) {
             $em = $this->getDoctrine()->getManager();
             $league = $em->getRepository(League::class)->find($id);
             $events = $league->getEvents();
             $descriptions = [];
             $indexes = [];
-            foreach($events as $event){
+            foreach ($events as $event) {
                 $descriptions[] = $event->getDescription();
                 $indexes[] = $event->getId();
             }
-            return new JsonResponse(array('index'=>$descriptions,'description'=>$indexes));
+            return new JsonResponse(array('index' => $indexes, 'description' => $descriptions));
+        } else {
+            return new JsonResponse('Nothing');
         }
-        else{
+    }
+    /**
+     * @Route("/api/userEvents/")
+     */
+    public function getListOfUserEvents(Request $request)
+    {
+        if ($request->request->get('userId')) {
+            $id = $request->request->get('userId');
+        }
+        if ($request->query->get('userId')) {
+            $id = $request->query->get('userId');
+        }
+        if ($id != null) {
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->find($id);
+            $events = $user->getAlreadyPlayedEvent();
+            $leagues = [];
+            $descriptions = [];
+            $indexes = [];
+            foreach ($events as $event) {
+                $leagues[] = $event->getTargetLeague()->getName();
+                $descriptions[] = $event->getDescription();
+                $indexes[] = $event->getId();
+            }
+            return new JsonResponse(array('index' => $indexes, 'description' => $descriptions,'league'=>$leagues));
+        } else {
             return new JsonResponse('Nothing');
         }
     }
