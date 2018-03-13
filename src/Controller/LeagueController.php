@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\League;
 use App\Entity\User;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -17,11 +18,12 @@ class LeagueController extends Controller
     {
         //TODO add checking for access
 
-        $parentLeague = $request->request->get('parentLeague');
+        $parentLeague = $request->query->get('parentLeague');
+        var_dump($parentLeague);
         if($parentLeague != null)
         {
-            $nameOfLeague = $request->request->get('nameOfLeague');
-            $description = $request->request->get('description');
+            $nameOfLeague = $request->query->get('nameOfLeague');
+            $description = $request->query->get('description');
 //            $file = $request->files->get ( 'photo' );
 //            $fileName = md5 ( uniqid () ) . '.' . $file->guessExtension ();
             if($nameOfLeague != null && $description != null)
@@ -30,11 +32,12 @@ class LeagueController extends Controller
                 $league  = new League();
                 $league->setAdmins([$this->getUser()]);
                 $league->setParentLeague($em->getRepository(League::class)->findOneBy(["name" => $parentLeague]));
+                return new Response('create');
             }
-
+            return new Response('if');
 
         }
-
+        return new Response('test');
 
     }
 
@@ -46,8 +49,8 @@ class LeagueController extends Controller
     {
         //TODO add checking for access
 
-       // $id = $request->request->get('userId');
-        $id = $request->query->get('userId');
+        $id = $request->request->get('userId');
+        //$id = $request->query->get('userId');
         if($id != null)
         {
             $em = $this->getDoctrine()->getManager();

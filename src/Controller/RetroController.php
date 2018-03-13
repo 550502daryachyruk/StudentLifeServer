@@ -93,6 +93,7 @@ class RetroController extends Controller
             $userPassword = $request->query->get('password');
             $userSex = $request->query->get('sex');
             $userBirthday = \DateTime::createFromFormat('Y-m-d', $request->query->get('birthday'));
+            $userImage = $request->files->get('attachment');
 
             $user->setFirstname($firstName);
             $user->setLastname($lastName);
@@ -101,6 +102,16 @@ class RetroController extends Controller
             $user->setPassword($userPassword);
             $user->setSex($userSex);
             $user->setBirthdayDate($userBirthday);
+
+            //var_dump($file);
+            $fileName = $this->generateUniqueFileName() . '.' . $userImage->guessExtension();
+
+            $userImage->move(
+                $this->getParameter('brochures_directory'),
+                $fileName
+            );
+            $user->setAvatarImage($fileName);
+
             $errors = $validator->validate($user);
 
             if (count($errors) > 0) {
