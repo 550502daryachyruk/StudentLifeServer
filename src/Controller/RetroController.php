@@ -24,12 +24,12 @@ class RetroController extends Controller
     public function index(Request $request)
     {
         if ($request->request->get('message')) {
-            return $this->json(["message" => "post sosi"]);
+            return $this->json(["message" => "post response"]);
         }
         if ($request->query->get('message')) {
-            return $this->json(["message" => "get sosi"]);
+            return $this->json(["message" => "get response"]);
         }
-        return $this->json("ty pidor");
+        return $this->json("default");
     }
 
     /**
@@ -84,7 +84,7 @@ class RetroController extends Controller
     {
         if ($request->query->all()) {
             $em = $this->getDoctrine()->getManager();
-            $userManager = $em->getRepository(User::class);
+            //$userManager = $em->getRepository(User::class);
 
             $user = new User();
             $firstName = $request->query->get('firstname');
