@@ -13,29 +13,34 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class LeagueController extends Controller
 {
     /**
-     * @Route("/leagueAdding")
+     * @Route("/api/createChildLeague/")
      */
     public function index(Request $request)
     {
         //TODO add checking for access
 
-        $parentLeague = $request->query->get('parentLeague');
-        var_dump($parentLeague);
-        if ($parentLeague != null) {
-            $nameOfLeague = $request->query->get('nameOfLeague');
-            $description = $request->query->get('description');
+
+            $nameOfLeague = $request->request->get('leagueName');
+            $description = $request->request->get('description');
+            $idParentLeague = $request->request->get('parentLeagueId');
 //            $file = $request->files->get ( 'photo' );
 //            $fileName = md5 ( uniqid () ) . '.' . $file->guessExtension ();
-            if ($nameOfLeague != null && $description != null) {
+            if ($nameOfLeague != null && $description != null && $idParentLeague != null) {
                 $em = $this->getDoctrine()->getManager();
                 $league = new League();
+                $league->setParentLeague($idParentLeague);
+                $league->setName($nameOfLeague);
+
                 $league->setAdmins([$this->getUser()]);
-                $league->setParentLeague($em->getRepository(League::class)->findOneBy(["name" => $parentLeague]));
-                return new Response('create');
+                $em->persist($league);
+                $em->flush();
+             //   $league->setParentLeague($em->getRepository(League::class)->findOneBy(["name" => $parentLeague]));
+                return new JsonResponse(array("response" => 'create'));
             }
-            return new Response('if');
-        }
-        return new Response('test');
+            else {
+                return new JsonResponse(array("response" =>'not create'));
+            }
+        return new JsonResponse('test');
 
     }
 
@@ -99,6 +104,7 @@ class LeagueController extends Controller
      */
     public function getListOfUserEvents(Request $request)
     {
+        $id = -1;
         if ($request->request->get('userId')) {
             $id = $request->request->get('userId');
         }

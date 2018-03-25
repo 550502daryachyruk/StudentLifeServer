@@ -22,6 +22,12 @@ class League
     private $name;
 
     /**
+     * @ORM\Column(type="string")
+     */
+    private $description;
+
+
+    /**
      * @ORM\OneToMany(targetEntity="League", mappedBy="parentLeague")
      */
     private $childrenLeagues;
@@ -47,6 +53,9 @@ class League
      * @ORM\OneToMany(targetEntity="App\Entity\Event", mappedBy="targetLeague")
      */
     private $events;
+
+
+
 
 
     /**
@@ -155,6 +164,22 @@ class League
     public function __construct()
     {
         $this->events = new ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param mixed $description
+     */
+    public function setDescription($description): void
+    {
+        $this->description = $description;
     }
 
 }
