@@ -17,8 +17,6 @@ class LeagueController extends Controller
      */
     public function index(Request $request)
     {
-        //TODO add checking for access
-
         $parentLeague = $request->query->get('parentLeague');
         var_dump($parentLeague);
         if ($parentLeague != null) {
@@ -105,7 +103,7 @@ class LeagueController extends Controller
         if ($request->query->get('userId')) {
             $id = $request->query->get('userId');
         }
-        if ($id != null) {
+        if ($id !== null) {
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($id);
             $events = $user->getAlreadyPlayedEvent();
