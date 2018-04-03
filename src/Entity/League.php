@@ -54,6 +54,11 @@ class League
      */
     private $events;
 
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Items", mappedBy="Items")
+     */
+    private $Items;
+
 
 
 
@@ -180,6 +185,22 @@ class League
     public function setDescription($description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getItems()
+    {
+        return $this->Items;
+    }
+
+    /**
+     * @param mixed $Items
+     */
+    public function setItems($Items): void
+    {
+        $this->Items = $Items;
     }
 
 }

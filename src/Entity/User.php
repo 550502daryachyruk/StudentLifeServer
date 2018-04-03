@@ -31,10 +31,21 @@ class User
      */
     private $leaguesWhereUser;
 
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Items", inversedBy="users")
+     */
+    private $BoughtItems;
+
+
+
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="targetUsers")
      */
     private $alreadyPlayedEvent;
+
+
+
 
     private $willBePlayedEvent;
 
@@ -288,6 +299,22 @@ class User
     }
     public function __construct() {
         $this->alreadyPlayedEvent = new \Doctrine\Common\Collections\ArrayCollection();
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getBoughtItems()
+    {
+        return $this->BoughtItems;
+    }
+
+    /**
+     * @param mixed $BoughtItems
+     */
+    public function setBoughtItems($BoughtItems): void
+    {
+        $this->BoughtItems = $BoughtItems;
     }
 
 }

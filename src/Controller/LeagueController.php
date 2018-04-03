@@ -57,6 +57,9 @@ class LeagueController extends Controller
         if ($id != null) {
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($id);
+            if($user === null) {
+
+            }
             $leagues = $user->getLeaguesWhereUser();
             $massive = [];
             $massive1 = [];
