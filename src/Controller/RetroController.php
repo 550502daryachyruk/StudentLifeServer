@@ -112,7 +112,7 @@ class RetroController extends Controller
             } else {
                 $em->persist($user);
                 $em->flush();
-                return new JsonResponse(array('type' => 'registration', 'error' => 'ok'));
+                return new JsonResponse(array('type' => 'registration', 'error' => 'ok','id'=>$user->getId()));
             }
         }
         return new JsonResponse(array('type' => 'registration', 'error' => 'invalid arguments'));
@@ -123,20 +123,33 @@ class RetroController extends Controller
      */
     public function login(Request $request, ValidatorInterface $validator)
     {
-        if ($request->query->all()) {
-            //$em = $this->getDoctrine()->getManager();
-            //$userManager = $em->getRepository(User::class);
-            $authType = $request->query->get('auth_type');
+//        if ($request->query->all()) {
+//            //$em = $this->getDoctrine()->getManager();
+//            //$userManager = $em->getRepository(User::class);
+//            $authType = $request->query->get('auth_type');
+//            $password = $request->query->get('password');
+//            $errors = $validator->validate($authType,new\Symfony\Component\Validator\Constraints\Email());
+//
+//            if (count($errors) > 0) {
+//                return new JsonResponse($this->jsonErrors('registration', $errors));
+//            } else {
+//                return new JsonResponse(array('type' => 'registration', 'error' => 'ok'));
+//            }
+//        }
+//        return new JsonResponse(array('type' => 'registration', 'error' => 'invalid arguments'));
+        if($request->request->all()){
+            $username = $request->query->get('username');
             $password = $request->query->get('password');
-            $errors = $validator->validate($authType,new\Symfony\Component\Validator\Constraints\Email());
-
-            if (count($errors) > 0) {
-                return new JsonResponse($this->jsonErrors('registration', $errors));
-            } else {
-                return new JsonResponse(array('type' => 'registration', 'error' => 'ok'));
+            $em = $this->getDoctrine()->getManager();
+            $userManager = $em->getRepository(User::class);
+            if($userManager->findOneBy(['username'=>$username,'password'=>$password]))
+            {
+                return new JsonResponse(array('type' => 'auth', 'error' => 'ok'));
+            }
+            else{
+                return new JsonResponse(array('type' => 'auth', 'error' => 'error'));
             }
         }
-        return new JsonResponse(array('type' => 'registration', 'error' => 'invalid arguments'));
     }
 
     public function jsonErrors(string $type, ConstraintViolationList $errors)
