@@ -40,7 +40,7 @@ class User
 
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="targetUsers")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="targetUsers")
      */
     private $alreadyPlayedEvent;
 
