@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Validator\Constraints as Assert;
@@ -44,7 +45,10 @@ class User
      */
     private $alreadyPlayedEvent;
 
-
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Currency", mappedBy="users")
+     */
+    private $currencys;
 
 
     private $willBePlayedEvent;
@@ -299,6 +303,9 @@ class User
     }
     public function __construct() {
         $this->alreadyPlayedEvent = new \Doctrine\Common\Collections\ArrayCollection();
+        $this->leaguesWhereUser= new \Doctrine\Common\Collections\ArrayCollection();
+        $this->BoughtItems= new \Doctrine\Common\Collections\ArrayCollection();
+
     }
 
     /**
@@ -315,6 +322,22 @@ class User
     public function setBoughtItems($BoughtItems): void
     {
         $this->BoughtItems = $BoughtItems;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCurrencys()
+    {
+        return $this->currencys;
+    }
+
+    /**
+     * @param mixed $currencys
+     */
+    public function setCurrencys($currencys): void
+    {
+        $this->currencys = $currencys;
     }
 
 }

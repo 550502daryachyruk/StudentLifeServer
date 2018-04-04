@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -168,7 +169,7 @@ class League
     }
     public function __construct()
     {
-        $this->events = new ArrayCollection();
+        $this->Items = new ArrayCollection();
     }
 
     /**

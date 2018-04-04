@@ -102,6 +102,7 @@ class LeagueController extends Controller
             return new JsonResponse('Nothing');
         }
     }
+
     /**
      * @Route("/api/userEvents/")
      */
@@ -114,7 +115,7 @@ class LeagueController extends Controller
         if ($request->query->get('userId')) {
             $id = $request->query->get('userId');
         }
-        if ($id != null) {
+        if ($id != -1) {
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($id);
             $events = $user->getAlreadyPlayedEvent();
@@ -131,4 +132,37 @@ class LeagueController extends Controller
             return new JsonResponse('Nothing');
         }
     }
+
+    /**
+     * @Route("/api/getAllUsersOfLeague")
+     */
+    public function getAllUsersOfLeague(Request $request)
+    {
+        $id = $request->query->get('leagueId');
+
+        if($id != null){
+            $em = $this->getDoctrine()->getManager();
+            $league = $em->getRepository(League::class)->find($id);
+            $users = $league->getUsers();
+
+            $ids = [];
+            $names = [];
+
+
+            /**
+             * @var $user User
+             */
+            foreach ($users as $user){
+                $names[] =  $user->getUsername();
+                $ids[] = $user->getId();
+            }
+
+            return new JsonResponse(['name' => $names, 'id' => $ids]);
+
+        }
+        return new JsonResponse('Nothing');
+
+    }
+
+
 }
