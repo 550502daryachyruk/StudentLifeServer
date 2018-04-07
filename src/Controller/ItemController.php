@@ -18,8 +18,8 @@ class ItemController extends Controller
      */
     public function index(Request $request)
     {
-        $userId = $request->query->get('userId');
-        $leagueId = $request->query->get('leagueId');
+        $userId = $request->request->get('userId');
+        $leagueId = $request->request->get('leagueId');
 
         if ($userId !== null && $leagueId !== null){
             $em = $this->getDoctrine()->getManager();
@@ -29,13 +29,13 @@ class ItemController extends Controller
             $league =  $em->getRepository(League::class)->find($leagueId);
             $listOfItems = $league->getItems();
 //TODO can't get arrays of item
-            $listOfNotBought =  array_diff($listOfItems,$listOfBought);
+           //$listOfNotBought =  array_diff($listOfItems,$listOfBought);
 
             $index = [];
             $price = [];
             $name = [];
             /**@var $item Items */
-            foreach ($listOfNotBought as $item ){
+            foreach ($listOfItems as $item ){
                 $index[] = $item->getId();
                 $price[] = $item->getPrice();
                 $name[] = $item->getName();

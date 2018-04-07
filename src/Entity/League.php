@@ -56,7 +56,7 @@ class League
     private $events;
 
     /**
-     * @ORM\OneToMany(targetEntity="App\Entity\Items", mappedBy="Items")
+     * @ORM\OneToMany(targetEntity="App\Entity\Items", mappedBy="targetLeague")
      */
     private $Items;
 

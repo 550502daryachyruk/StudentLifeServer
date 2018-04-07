@@ -63,13 +63,10 @@ class LeagueController extends Controller
             $leagues = $user->getLeaguesWhereUser();
             $massive = [];
             $massive1 = [];
-            //   var_dump($leagues);
             foreach ($leagues as $league) {
-                //var_dump($league);
                 $massive[] = $league->getId();
                 $massive1[] = $league->getName();
             }
-            //    var_dump($this->json($massive));
             return $this->json(["indexes" => $massive, "names" => $massive1]);
         } else {
             return $this->json("Nothing");
