@@ -137,19 +137,35 @@ class RetroController extends Controller
 //            }
 //        }
 //        return new JsonResponse(array('type' => 'registration', 'error' => 'invalid arguments'));
-        if($request->request->all()){
+        if($request->query->all()){
             $username = $request->query->get('username');
             $password = $request->query->get('password');
             $em = $this->getDoctrine()->getManager();
             $userManager = $em->getRepository(User::class);
-            if($userManager->findOneBy(['username'=>$username,'password'=>$password]))
+            $user = $userManager->findOneBy(['username'=>$username,'password'=>$password]);
+            if($user)
             {
-                return new JsonResponse(array('type' => 'auth', 'error' => 'ok'));
+                return new JsonResponse(array('type' => 'auth', 'error' => 'ok','id'=>$user->getId()));
             }
             else{
                 return new JsonResponse(array('type' => 'auth', 'error' => 'error'));
             }
         }
+        if($request->request->all()){
+            $username = $request->request->get('username');
+            $password = $request->request->get('password');
+            $em = $this->getDoctrine()->getManager();
+            $userManager = $em->getRepository(User::class);
+            $user = $userManager->findOneBy(['username'=>$username,'password'=>$password]);
+            if($user)
+            {
+                return new JsonResponse(array('type' => 'auth', 'error' => 'ok','id'=>$user->getId()));
+            }
+            else{
+                return new JsonResponse(array('type' => 'auth', 'error' => 'error'));
+            }
+        }
+        return new JsonResponse(array('type'=>'auth','error'=>'invalid arguments'));
     }
 
     public function jsonErrors(string $type, ConstraintViolationList $errors)
