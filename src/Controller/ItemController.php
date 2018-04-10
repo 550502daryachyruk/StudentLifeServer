@@ -151,8 +151,24 @@ class ItemController extends Controller
      */
     public function buyItems(Request $request)
     {
+        $userId = $request->query->get('userId');
+        $itemId = $request->query->get('itemId');
 
+        if ($userId != null && $itemId != null) {
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->find($userId);
+            $item = $em->getRepository(Items::class)->find($itemId);
+            $league = $item->getTargetLeague();
+            $currency = $user->getCurrencysById($league->getId());
 
+            /**  @var $currency Currency*/
+            if($currency == null || $currency->getValue() < $item->getPrice()){
+                return new JsonResponse(["answer" => "Not enough money"]);
+            }
+            $user->addBoughtItems($item);
+            $currency->setValue($currency->getValue() - $item->getPrice());
+            $em->flush();
+            return new JsonResponse(["answer" => "OK"]);
+        } else return new JsonResponse(["answer" => "Not enough parametres"]);
     }
-
 }

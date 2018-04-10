@@ -349,6 +349,19 @@ class User
     }
 
     /**
+     * @return mixed
+     */
+    public function getCurrencysById($leagueId)
+    {
+        /** @var  $cur Currency*/
+        foreach ($this->currencys as $cur){
+            if($cur->getLeaguesId() == $leagueId) return $cur;
+        }
+    }
+
+
+
+    /**
      * @param mixed $currencys
      */
     public function setCurrencys($currencys): void
