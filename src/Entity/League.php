@@ -2,6 +2,7 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -37,6 +38,11 @@ class League
      */
     private $parentLeague;
 
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $nameOfCurrency;
+
 
     /**
      *
@@ -53,6 +59,11 @@ class League
      * @ORM\OneToMany(targetEntity="App\Entity\Event", mappedBy="targetLeague")
      */
     private $events;
+
+    /**
+     * @ORM\OneToMany(targetEntity="App\Entity\Items", mappedBy="targetLeague")
+     */
+    private $Items;
 
 
 
@@ -163,7 +174,7 @@ class League
     }
     public function __construct()
     {
-        $this->events = new ArrayCollection();
+        $this->Items = new ArrayCollection();
     }
 
     /**
@@ -180,6 +191,38 @@ class League
     public function setDescription($description): void
     {
         $this->description = $description;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getItems()
+    {
+        return $this->Items;
+    }
+
+    /**
+     * @param mixed $Items
+     */
+    public function setItems($Items): void
+    {
+        $this->Items = $Items;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNameOfCurrency()
+    {
+        return $this->nameOfCurrency;
+    }
+
+    /**
+     * @param mixed $nameOfCurrency
+     */
+    public function setNameOfCurrency($nameOfCurrency): void
+    {
+        $this->nameOfCurrency = $nameOfCurrency;
     }
 
 }

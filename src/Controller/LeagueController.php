@@ -23,13 +23,15 @@ class LeagueController extends Controller
             $nameOfLeague = $request->request->get('leagueName');
             $description = $request->request->get('description');
             $idParentLeague = $request->request->get('parentLeagueId');
+            $nameOfCurrency = $request->request->get('nameOfCurrency');
 //            $file = $request->files->get ( 'photo' );
 //            $fileName = md5 ( uniqid () ) . '.' . $file->guessExtension ();
-            if ($nameOfLeague != null && $description != null && $idParentLeague != null) {
+            if ($nameOfCurrency != null || $nameOfLeague != null && $description != null && $idParentLeague != null) {
                 $em = $this->getDoctrine()->getManager();
                 $league = new League();
                 $league->setParentLeague($idParentLeague);
                 $league->setName($nameOfLeague);
+                $league->setNameOfCurrency($nameOfCurrency);
 
                 $league->setAdmins([$this->getUser()]);
                 $em->persist($league);
@@ -57,16 +59,16 @@ class LeagueController extends Controller
         if ($id != null) {
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($id);
+            if($user === null) {
+
+            }
             $leagues = $user->getLeaguesWhereUser();
             $massive = [];
             $massive1 = [];
-            //   var_dump($leagues);
             foreach ($leagues as $league) {
-                //var_dump($league);
                 $massive[] = $league->getId();
                 $massive1[] = $league->getName();
             }
-            //    var_dump($this->json($massive));
             return $this->json(["indexes" => $massive, "names" => $massive1]);
         } else {
             return $this->json("Nothing");
@@ -78,15 +80,20 @@ class LeagueController extends Controller
      */
     public function getListOfEvent(Request $request)
     {
-        if ($request->request->get('leagueId')) {
-            $id = $request->request->get('leagueId');
-        }
+//        if ($request->request->get('leagueId')) {
+//            $id = $request->request->get('leagueId');
+//        }
         if ($request->query->get('leagueId')) {
             $id = $request->query->get('leagueId');
         }
-        if ($id != null) {
+        $userId = $request->query->get('userId');
+        if ($id != null  || $userId != null) {
             $em = $this->getDoctrine()->getManager();
             $league = $em->getRepository(League::class)->find($id);
+            $user = $em->getRepository(User::class)->find($userId);
+
+            //TODO
+
             $events = $league->getEvents();
             $descriptions = [];
             $indexes = [];
@@ -99,6 +106,7 @@ class LeagueController extends Controller
             return new JsonResponse('Nothing');
         }
     }
+
     /**
      * @Route("/api/userEvents/")
      */
@@ -111,7 +119,7 @@ class LeagueController extends Controller
         if ($request->query->get('userId')) {
             $id = $request->query->get('userId');
         }
-        if ($id != null) {
+        if ($id != -1) {
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($id);
             $events = $user->getAlreadyPlayedEvent();
@@ -128,4 +136,37 @@ class LeagueController extends Controller
             return new JsonResponse('Nothing');
         }
     }
+
+    /**
+     * @Route("/api/getAllUsersOfLeague")
+     */
+    public function getAllUsersOfLeague(Request $request)
+    {
+        $id = $request->query->get('leagueId');
+
+        if($id != null){
+            $em = $this->getDoctrine()->getManager();
+            $league = $em->getRepository(League::class)->find($id);
+            $users = $league->getUsers();
+
+            $ids = [];
+            $names = [];
+
+
+            /**
+             * @var $user User
+             */
+            foreach ($users as $user){
+                $names[] =  $user->getUsername();
+                $ids[] = $user->getId();
+            }
+
+            return new JsonResponse(['name' => $names, 'id' => $ids]);
+
+        }
+        return new JsonResponse('Nothing');
+
+    }
+
+
 }
