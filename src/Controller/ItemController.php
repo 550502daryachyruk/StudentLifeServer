@@ -24,7 +24,15 @@ class ItemController extends Controller
         if ($userId !== null && $leagueId !== null){
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($userId);
-            $listOfBought = $user->getBoughtItems();
+            $listOfBought1 = $user->getBoughtItems();
+            $listOfBought = [];
+            /**@var $item Items */
+
+            foreach ($listOfBought1 as $item){
+                if($item->getTargetLeague()->getId() === $leagueId){
+                    $listOfBought[] = $item;
+                }
+            }
 
             $league =  $em->getRepository(League::class)->find($leagueId);
             $listOfItems = $league->getItems();
