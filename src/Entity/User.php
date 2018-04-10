@@ -240,6 +240,14 @@ class User
     {
         $this->leaguesWhereUser = $leaguesWhereUser;
     }
+    public function addLeaguesWhereUser($leaguesWhereUser): void
+    {
+        $this->leaguesWhereUser[] = $leaguesWhereUser;
+    }
+    public function removeLeaguesWhereUser($leaguesWhereUser): void
+    {
+        $this->leaguesWhereUser->removeElement($leaguesWhereUser);
+    }
 
     public function getRegisterDate()
     {
@@ -323,6 +331,14 @@ class User
     {
         $this->BoughtItems = $BoughtItems;
     }
+
+    /**
+     * @param mixed $BoughtItems
+     */
+    public function addBoughtItems($BoughtItem){
+        $this->BoughtItems[] = $BoughtItem;
+    }
+
 
     /**
      * @return mixed

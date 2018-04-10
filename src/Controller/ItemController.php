@@ -58,7 +58,7 @@ class ItemController extends Controller
             $index = [];
             $price = [];
             $name = [];
-            $desccription = [];
+            $description = [];
             /**@var $item Items */
             foreach ($listOfNotBought as $item ){
                 $index[] = $item->getId();
@@ -70,7 +70,7 @@ class ItemController extends Controller
             $index1 = [];
             $price1 = [];
             $name1 = [];
-            $desccription1 = [];
+            $description1 = [];
             foreach ($listOfBought as $item ){
                 $index1[] = $item->getId();
                 $price1[] = $item->getPrice();
@@ -84,7 +84,29 @@ class ItemController extends Controller
         return new JsonResponse(array("Nothing"));
     }
 
+    /**
+     * @Route("/api/buyingItem", name="item")
+     */
+    public function buyingItem(Request $request)
+    {
+        $userId = $request->query->get('userId');
+        $itemId = $request->query->get('itemId');
 
+
+        if($userId != null && $itemId != null){
+
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->find($userId);
+            $item = $em->getRepository(Items::class)->find($itemId);
+
+            $user->addBoughtItems($item);
+            $em->flush();
+            return new JsonResponse(["answer" => "OK"]);
+        }
+        else return new JsonResponse(["answer" => "Not enough parametres"]);
+
+
+    }
 
         /**
          * @Route("/api/giveUserCurrency")
