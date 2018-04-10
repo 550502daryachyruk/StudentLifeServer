@@ -23,13 +23,15 @@ class LeagueController extends Controller
             $nameOfLeague = $request->request->get('leagueName');
             $description = $request->request->get('description');
             $idParentLeague = $request->request->get('parentLeagueId');
+            $nameOfCurrency = $request->request->get('nameOfCurrency');
 //            $file = $request->files->get ( 'photo' );
 //            $fileName = md5 ( uniqid () ) . '.' . $file->guessExtension ();
-            if ($nameOfLeague != null && $description != null && $idParentLeague != null) {
+            if ($nameOfCurrency != null || $nameOfLeague != null && $description != null && $idParentLeague != null) {
                 $em = $this->getDoctrine()->getManager();
                 $league = new League();
                 $league->setParentLeague($idParentLeague);
                 $league->setName($nameOfLeague);
+                $league->setNameOfCurrency($nameOfCurrency);
 
                 $league->setAdmins([$this->getUser()]);
                 $em->persist($league);
@@ -78,15 +80,20 @@ class LeagueController extends Controller
      */
     public function getListOfEvent(Request $request)
     {
-        if ($request->request->get('leagueId')) {
-            $id = $request->request->get('leagueId');
-        }
+//        if ($request->request->get('leagueId')) {
+//            $id = $request->request->get('leagueId');
+//        }
         if ($request->query->get('leagueId')) {
             $id = $request->query->get('leagueId');
         }
-        if ($id != null) {
+        $userId = $request->query->get('userId');
+        if ($id != null  || $userId != null) {
             $em = $this->getDoctrine()->getManager();
             $league = $em->getRepository(League::class)->find($id);
+            $user = $em->getRepository(User::class)->find($userId);
+
+            //TODO
+
             $events = $league->getEvents();
             $descriptions = [];
             $indexes = [];

@@ -38,6 +38,11 @@ class League
      */
     private $parentLeague;
 
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $nameOfCurrency;
+
 
     /**
      *
@@ -202,6 +207,22 @@ class League
     public function setItems($Items): void
     {
         $this->Items = $Items;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getNameOfCurrency()
+    {
+        return $this->nameOfCurrency;
+    }
+
+    /**
+     * @param mixed $nameOfCurrency
+     */
+    public function setNameOfCurrency($nameOfCurrency): void
+    {
+        $this->nameOfCurrency = $nameOfCurrency;
     }
 
 }

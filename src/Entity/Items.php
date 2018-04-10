@@ -28,6 +28,10 @@ class Items
      * @ORM\Column(type="integer")
      */
     private $price;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $description;
 
 
     /**
@@ -117,6 +121,22 @@ class Items
     public function setTargetLeague($targetLeague): void
     {
         $this->targetLeague = $targetLeague;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * @param mixed $description
+     */
+    public function setDescription($description): void
+    {
+        $this->description = $description;
     }
 
 

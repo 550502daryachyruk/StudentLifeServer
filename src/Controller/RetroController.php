@@ -145,7 +145,12 @@ class RetroController extends Controller
             $user = $userManager->findOneBy(['username'=>$username,'password'=>$password]);
             if($user)
             {
-                return new JsonResponse(array('type' => 'auth', 'error' => 'ok','id'=>$user->getId()));
+                return new JsonResponse(array('type' => 'auth',
+                    'error' => 'ok',
+                    'id'=>$user->getId(),
+                    'firstName' => $user->getFirstname(),
+                    'lastName' => $user->getLastname(),
+                    ));
             }
             else{
                 return new JsonResponse(array('type' => 'auth', 'error' => 'error'));
@@ -159,7 +164,12 @@ class RetroController extends Controller
             $user = $userManager->findOneBy(['username'=>$username,'password'=>$password]);
             if($user)
             {
-                return new JsonResponse(array('type' => 'auth', 'error' => 'ok','id'=>$user->getId()));
+                return new JsonResponse(array('type' => 'auth',
+                    'error' => 'ok',
+                    'firstName' => $user->getFirstname(),
+                    'lastName' => $user->getLastname(),
+                    'id'=>$user->getId(),
+                ));
             }
             else{
                 return new JsonResponse(array('type' => 'auth', 'error' => 'error'));
