@@ -58,7 +58,7 @@ class ItemController extends Controller
             $index = [];
             $price = [];
             $name = [];
-            $desccription = [];
+            $description = [];
             /**@var $item Items */
             foreach ($listOfNotBought as $item ){
                 $index[] = $item->getId();
@@ -70,7 +70,7 @@ class ItemController extends Controller
             $index1 = [];
             $price1 = [];
             $name1 = [];
-            $desccription1 = [];
+            $description1 = [];
             foreach ($listOfBought as $item ){
                 $index1[] = $item->getId();
                 $price1[] = $item->getPrice();

@@ -46,6 +46,7 @@ class UserEditController extends Controller
      */
     public function user_view(Request $request)
     {
+        $id = null;
         if ($request->request->get('id')) {
             $id = $request->request->get('id');
         }
