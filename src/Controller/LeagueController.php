@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class LeagueController extends Controller
 {
     /**
-     * @Route("/api/createChildLeague/")
+     * @Route("/api/createChildLeague")
      */
     public function index(Request $request)
     {
@@ -29,11 +29,13 @@ class LeagueController extends Controller
             if ($nameOfCurrency != null || $nameOfLeague != null && $description != null && $idParentLeague != null) {
                 $em = $this->getDoctrine()->getManager();
                 $league = new League();
-                $league->setParentLeague($idParentLeague);
+                $parent = $em->getRepository(League::class)->find($idParentLeague);
+                $league->setParentLeague($parent);
                 $league->setName($nameOfLeague);
+                $league->setDescription($description);
                 $league->setNameOfCurrency($nameOfCurrency);
 
-                $league->setAdmins([$this->getUser()]);
+                $league->setAdmins($this->getUser());
                 $em->persist($league);
                 $em->flush();
              //   $league->setParentLeague($em->getRepository(League::class)->findOneBy(["name" => $parentLeague]));
@@ -91,8 +93,21 @@ class LeagueController extends Controller
             $em = $this->getDoctrine()->getManager();
             $league = $em->getRepository(League::class)->find($id);
             $user = $em->getRepository(User::class)->find($userId);
-
-            //TODO
+            $roleOfUser = "user";
+            foreach ($user->getLeaguesWhereUser() as $leag){
+                if($leag->getId() == $id){
+                    $roleOfUser = "subscriber";
+                    break;
+                }
+            }
+            if($roleOfUser == "user") {
+                foreach ($user->getLeaguesWhereAdmin() as $leag) {
+                    if ($leag->getId() == $id) {
+                        $roleOfUser = "admin";
+                        break;
+                    }
+                }
+            }
 
             $events = $league->getEvents();
             $descriptions = [];
@@ -101,7 +116,7 @@ class LeagueController extends Controller
                 $descriptions[] = $event->getDescription();
                 $indexes[] = $event->getId();
             }
-            return new JsonResponse(array('index' => $indexes, 'description' => $descriptions));
+            return new JsonResponse(array('role' => $roleOfUser,'index' => $indexes, 'description' => $descriptions));
         } else {
             return new JsonResponse('Nothing');
         }
@@ -160,13 +175,61 @@ class LeagueController extends Controller
                 $names[] =  $user->getUsername();
                 $ids[] = $user->getId();
             }
-
             return new JsonResponse(['name' => $names, 'id' => $ids]);
-
         }
         return new JsonResponse('Nothing');
-
     }
 
 
+    /**
+     * @Route("/api/unsubscribeLeague")
+     */
+    public function unsubscribeLeague(Request $request)
+    {
+        $leagueId = $request->request->get('leagueId');
+        if($leagueId == 1){
+            return new JsonResponse(['answer' => "Can't go from first league"]);
+        }
+        $userId = $request->request->get('userId');
+
+        if($leagueId != null && $userId != null){
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->find($userId);
+            $league = $em->getRepository(League::class)->find($leagueId);
+            if($user->getLeaguesWhereUser()->contains($league)) {
+                $user->removeLeaguesWhereUser($league);
+                $em->flush();
+            }
+            return new JsonResponse(['answer' => "OK"]);
+        }
+        return new JsonResponse(['answer' => "Not enough parametres"]);
+    }
+    /**
+     * @Route("/api/subscribeLeague")
+     */
+    public function subscribeLeague(Request $request)
+    {
+        $leagueId = $request->request->get('leagueId');
+        $userId = $request->request->get('userId');
+
+        if($leagueId != null && $userId != null){
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->find($userId);
+            $league = $em->getRepository(League::class)->find($leagueId);
+            if($league != null && $user != null) {
+                if(!$user->getLeaguesWhereUser()->contains($league) && !$user->getLeaguesWhereAdmin()->contains($league)) {
+
+                    if($league->getParentLeague()->getUsers()->contains($user)) {
+                        $user->addLeaguesWhereUser($league);
+                        $em->flush();
+                        return new JsonResponse(['answer' => "OK"]);
+                    }
+                    else return new JsonResponse(['answer' => "Must be subscriber of parent league"]);
+                }
+            }
+            else
+                return new JsonResponse(['answer' => "This user or league not found"]);
+        }
+        return new JsonResponse(['answer' => "Not enough parametres"]);
+    }
 }
