@@ -14,7 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class ItemController extends Controller
 {
     /**
-     * @Route("/api/getListOfLeagueShopProducts", name="item")
+     * @Route("/api/getListOfLeagueShopProducts")
      */
     public function index(Request $request)
     {
@@ -27,9 +27,9 @@ class ItemController extends Controller
             $listOfBought1 = $user->getBoughtItems();
             $listOfBought = [];
             /**@var $item Items */
-
+      //      $currency = $user->getCurrencysById($leagueId);
             foreach ($listOfBought1 as $item){
-                if($item->getTargetLeague()->getId() === $leagueId){
+                if($item->getTargetLeague()->getId() == $leagueId){
                     $listOfBought[] = $item;
                 }
             }
@@ -78,34 +78,12 @@ class ItemController extends Controller
                 $description1[] = $item->getDescription();
             }
             return new JsonResponse(array("NotBought" => ["index" => $index , "name" => $name , "price" => $price, "description" => $description],
-                                          "BoughtItems" =>  ["index" => $index1 , "name" => $name1 , "price" => $price1, "description" => $description1])
+                                          "BoughtItems" =>  ["index" => $index1 , "name" => $name1 , "price" => $price1, "description" => $description1],
+      //                                      "currency" => $currency->getValue()
+                )
             );
         }
         return new JsonResponse(array("Nothing"));
-    }
-
-    /**
-     * @Route("/api/buyingItem", name="item")
-     */
-    public function buyingItem(Request $request)
-    {
-        $userId = $request->query->get('userId');
-        $itemId = $request->query->get('itemId');
-
-
-        if($userId != null && $itemId != null){
-
-            $em = $this->getDoctrine()->getManager();
-            $user = $em->getRepository(User::class)->find($userId);
-            $item = $em->getRepository(Items::class)->find($itemId);
-
-            $user->addBoughtItems($item);
-            $em->flush();
-            return new JsonResponse(["answer" => "OK"]);
-        }
-        else return new JsonResponse(["answer" => "Not enough parametres"]);
-
-
     }
 
         /**
@@ -147,9 +125,9 @@ class ItemController extends Controller
 
 
     /**
-     * @Route("/api/buyItems")
+     * @Route("/api/buyingItem")
      */
-    public function buyItems(Request $request)
+    public function buyingItem(Request $request)
     {
         $userId = $request->request->get('userId');
         $itemId = $request->request->get('itemId');
