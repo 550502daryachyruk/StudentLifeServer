@@ -27,7 +27,7 @@ class ItemController extends Controller
             $listOfBought1 = $user->getBoughtItems();
             $listOfBought = [];
             /**@var $item Items */
-      //      $currency = $user->getCurrencysById($leagueId);
+            $currency = $user->getCurrencysById($leagueId);
             foreach ($listOfBought1 as $item){
                 if($item->getTargetLeague()->getId() == $leagueId){
                     $listOfBought[] = $item;
@@ -79,7 +79,7 @@ class ItemController extends Controller
             }
             return new JsonResponse(array("NotBought" => ["index" => $index , "name" => $name , "price" => $price, "description" => $description],
                                           "BoughtItems" =>  ["index" => $index1 , "name" => $name1 , "price" => $price1, "description" => $description1],
-      //                                      "currency" => $currency->getValue()
+                                            "currency" => $currency->getValue()
                 )
             );
         }
@@ -145,7 +145,12 @@ class ItemController extends Controller
             }
             $user->addBoughtItems($item);
             $currency->setValue($currency->getValue() - $item->getPrice());
-            $em->flush();
+            try {
+                $em->flush();
+            }
+            catch (\Exception $e){
+                return new JsonResponse(["answer" => $e->getMessage()]);
+            }
             return new JsonResponse(["answer" => "OK"]);
         } else return new JsonResponse(["answer" => "Not enough parametres"]);
     }
