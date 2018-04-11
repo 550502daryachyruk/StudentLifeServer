@@ -151,8 +151,8 @@ class ItemController extends Controller
      */
     public function buyItems(Request $request)
     {
-        $userId = $request->query->get('userId');
-        $itemId = $request->query->get('itemId');
+        $userId = $request->request->get('userId');
+        $itemId = $request->request->get('itemId');
 
         if ($userId != null && $itemId != null) {
             $em = $this->getDoctrine()->getManager();

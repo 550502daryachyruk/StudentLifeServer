@@ -13,7 +13,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 class LeagueController extends Controller
 {
     /**
-     * @Route("/api/createChildLeague/")
+     * @Route("/api/createChildLeague")
      */
     public function index(Request $request)
     {
@@ -29,11 +29,13 @@ class LeagueController extends Controller
             if ($nameOfCurrency != null || $nameOfLeague != null && $description != null && $idParentLeague != null) {
                 $em = $this->getDoctrine()->getManager();
                 $league = new League();
-                $league->setParentLeague($idParentLeague);
+                $parent = $em->getRepository(League::class)->find($idParentLeague);
+                $league->setParentLeague($parent);
                 $league->setName($nameOfLeague);
+                $league->setDescription($description);
                 $league->setNameOfCurrency($nameOfCurrency);
 
-                $league->setAdmins([$this->getUser()]);
+                $league->setAdmins($this->getUser());
                 $em->persist($league);
                 $em->flush();
              //   $league->setParentLeague($em->getRepository(League::class)->findOneBy(["name" => $parentLeague]));

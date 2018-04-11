@@ -226,6 +226,14 @@ class User
     }
 
     /**
+     * @param mixed $leaguesWhereAdmin
+     */
+    public function addLeaguesWhereAdmin($leaguesWhereAdmin): void
+    {
+        $this->leaguesWhereAdmin[] = $leaguesWhereAdmin;
+    }
+
+    /**
      * @return mixed
      */
     public function getLeaguesWhereUser()
@@ -312,8 +320,8 @@ class User
     public function __construct() {
         $this->alreadyPlayedEvent = new \Doctrine\Common\Collections\ArrayCollection();
         $this->leaguesWhereUser= new \Doctrine\Common\Collections\ArrayCollection();
+        $this->leaguesWhereAdmin= new \Doctrine\Common\Collections\ArrayCollection();
         $this->BoughtItems= new \Doctrine\Common\Collections\ArrayCollection();
-
     }
 
     /**
