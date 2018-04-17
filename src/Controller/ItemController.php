@@ -21,36 +21,36 @@ class ItemController extends Controller
         $userId = $request->query->get('userId');
         $leagueId = $request->query->get('leagueId');
 
-        if ($userId !== null && $leagueId !== null){
+        if ($userId !== null && $leagueId !== null) {
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($userId);
             $listOfBought1 = $user->getBoughtItems();
             $listOfBought = [];
             /**@var $item Items */
-      //      $currency = $user->getCurrencysById($leagueId);
-            foreach ($listOfBought1 as $item){
-                if($item->getTargetLeague()->getId() == $leagueId){
+            $currency = $user->getCurrencysById($leagueId);
+            foreach ($listOfBought1 as $item) {
+                if ($item->getTargetLeague()->getId() == $leagueId) {
                     $listOfBought[] = $item;
                 }
             }
 
-            $league =  $em->getRepository(League::class)->find($leagueId);
+            $league = $em->getRepository(League::class)->find($leagueId);
             $listOfItems = $league->getItems();
-            if($league == null  || $user == null){
+            if ($league == null || $user == null) {
                 return new JsonResponse(array('answer' => "Not found User or League"));
             }
-           $listOfNotBought = [];
+            $listOfNotBought = [];
             /**@var $everyItem Items */
             /**@var $boughtItem Items */
-            foreach ($listOfItems as $everyItem){
+            foreach ($listOfItems as $everyItem) {
                 $flag = true;
-                foreach ($listOfBought as $boughtItem){
-                    if($boughtItem->getId() == $everyItem->getId()){
+                foreach ($listOfBought as $boughtItem) {
+                    if ($boughtItem->getId() == $everyItem->getId()) {
                         $flag = false;
                         break;
                     }
                 }
-                if($flag === true){
+                if ($flag === true) {
                     $listOfNotBought[] = $everyItem;
                 }
             }
@@ -60,7 +60,7 @@ class ItemController extends Controller
             $name = [];
             $description = [];
             /**@var $item Items */
-            foreach ($listOfNotBought as $item ){
+            foreach ($listOfNotBought as $item) {
                 $index[] = $item->getId();
                 $price[] = $item->getPrice();
                 $name[] = $item->getName();
@@ -71,31 +71,31 @@ class ItemController extends Controller
             $price1 = [];
             $name1 = [];
             $description1 = [];
-            foreach ($listOfBought as $item ){
+            foreach ($listOfBought as $item) {
                 $index1[] = $item->getId();
                 $price1[] = $item->getPrice();
                 $name1[] = $item->getName();
                 $description1[] = $item->getDescription();
             }
-            return new JsonResponse(array("NotBought" => ["index" => $index , "name" => $name , "price" => $price, "description" => $description],
-                                          "BoughtItems" =>  ["index" => $index1 , "name" => $name1 , "price" => $price1, "description" => $description1],
-      //                                      "currency" => $currency->getValue()
+            return new JsonResponse(array("NotBought" => ["index" => $index, "name" => $name, "price" => $price, "description" => $description],
+                    "BoughtItems" => ["index" => $index1, "name" => $name1, "price" => $price1, "description" => $description1],
+                    "currency" => $currency->getValue()
                 )
             );
         }
         return new JsonResponse(array("Nothing"));
     }
 
-        /**
-         * @Route("/api/giveUserCurrency")
-         */
-        public function giveUserCurrency(Request $request)
+    /**
+     * @Route("/api/giveUserCurrency")
+     */
+    public function giveUserCurrency(Request $request)
     {
         $userId = $request->request->get('userId');
         $leagueId = $request->request->get('leagueId');
         $valueOfcurrency = $request->request->get('valueOfcurrency');
 
-        if($userId != null && $leagueId != null && $valueOfcurrency != null){
+        if ($userId != null && $leagueId != null && $valueOfcurrency != null) {
 
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($userId);
@@ -104,10 +104,10 @@ class ItemController extends Controller
 
             $currency = new Currency();
 
-            /**@var $cur Currency*/
+            /**@var $cur Currency */
             //Find currency to needed league
-            foreach ($currencys as $cur){
-                if($cur->getLeaguesId() == $leagueId){
+            foreach ($currencys as $cur) {
+                if ($cur->getLeaguesId() == $leagueId) {
                     $currency = $cur;
                     break;
                 }
@@ -121,11 +121,8 @@ class ItemController extends Controller
     }
 
 
-
-
-
     /**
-     * @Route("/api/buyingItem")
+     * @Route("/api/buyingItem/")
      */
     public function buyingItem(Request $request)
     {
@@ -139,8 +136,8 @@ class ItemController extends Controller
             $league = $item->getTargetLeague();
             $currency = $user->getCurrencysById($league->getId());
 
-            /**  @var $currency Currency*/
-            if($currency == null || $currency->getValue() < $item->getPrice()){
+            /**  @var $currency Currency */
+            if ($currency == null || $currency->getValue() < $item->getPrice()) {
                 return new JsonResponse(["answer" => "Not enough money"]);
             }
             $user->addBoughtItems($item);

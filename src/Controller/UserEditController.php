@@ -3,6 +3,8 @@
 namespace App\Controller;
 
 use App\Entity\User;
+use http\Env\Response;
+use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
