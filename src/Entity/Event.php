@@ -34,6 +34,10 @@ class Event
      * @ORM\Column(type="text")
      */
     private $description;
+    /**
+     * @ORM\Column(type="string")
+     */
+    private $title;
 
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="eventsLiked")
@@ -169,6 +173,22 @@ class Event
     public function setDateOfEvent($dateOfEvent): void
     {
         $this->dateOfEvent = $dateOfEvent;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getTitle()
+    {
+        return $this->title;
+    }
+
+    /**
+     * @param mixed $title
+     */
+    public function setTitle($title): void
+    {
+        $this->title = $title;
     }
     // add your own fields
 }
