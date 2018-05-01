@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use http\Env\Response;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
+use Symfony\Component\HttpFoundation\BinaryFileResponse;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
@@ -17,7 +18,7 @@ class UserEditController extends Controller
     /**
      * @Route("api/user/edit", name="user_edit")
      */
-    public function user_edit(Request $request,ValidatorInterface $validator)
+    public function user_edit(Request $request, ValidatorInterface $validator)
     {
         if ($request->request->get('id')) {
             $id = $request->request->get('id');
@@ -43,6 +44,7 @@ class UserEditController extends Controller
             }
         }
     }
+
     /**
      * @Route("api/user/view", name="user_view")
      */
@@ -56,18 +58,39 @@ class UserEditController extends Controller
             $id = $request->query->get('id');
         }
         if ($id != null) {
-        $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($id);
-        $email = $user->getEmail();
-        $password = $user->getPassword();
-        $firstname = $user->getFirstname();
-        $lastname = $user->getLastname();
-        return new JsonResponse(array('email'=>$email,'password'=>$password,
-            'firstname'=>$firstname,'lastname'=>$lastname));
-    }
-    else{
+            $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($id);
+            $email = $user->getEmail();
+            $password = $user->getPassword();
+            $firstname = $user->getFirstname();
+            $lastname = $user->getLastname();
+            return new JsonResponse(array('email' => $email, 'password' => $password,
+                'firstname' => $firstname, 'lastname' => $lastname));
+        } else {
             return new JsonResponse('error');
         }
     }
+
+    /**
+     * @Route("api/user/viewimage", name="user_image")
+     */
+    public function user_image(Request $request)
+    {
+        $id = null;
+        if ($request->request->get('id')) {
+            $id = $request->request->get('id');
+        }
+        if ($request->query->get('id')) {
+            $id = $request->query->get('id');
+        }
+        if ($id != null) {
+            $user = $this->getDoctrine()->getManager()->getRepository(User::class)->find($id);
+            $image = $user->getAvatarImage();
+            return new BinaryFileResponse($image);
+        } else {
+            return new JsonResponse('error');
+        }
+    }
+
     public function jsonErrors(string $type, ConstraintViolationList $errors)
     {
         $arr = array('type' => $type);

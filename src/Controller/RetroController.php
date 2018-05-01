@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\User;
 use App\Form\UserFormType;
 use Couchbase\Document;
+use Symfony\Component\HttpFoundation\File\File;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -68,34 +69,35 @@ class RetroController extends Controller
         );
 
     }
+
     /**
      * @Route("/api/register", name="register")
      */
     public function register(Request $request, ValidatorInterface $validator)
     {
-        if ($request->query->all()) {
+        if ($request->request->all()) {
             $em = $this->getDoctrine()->getManager();
             //$userManager = $em->getRepository(User::class);
 
             $user = new User();
-            $firstName = $request->query->get('firstname');
-            $lastName = $request->query->get('lastname');
-            $userUsername = $request->query->get('username');
-            $userEmail = $request->query->get('email');
-            $userPassword = $request->query->get('password');
-            $userSex = $request->query->get('sex');
-            $userBirthday = \DateTime::createFromFormat('Y-m-d', $request->query->get('birthday'));
-            $userImage = $request->get('attachment');
-            if(!$userImage) {
-                $user->setAvatarImage($this->getParameter('brochures_directory')."/default.jpg");
-            }
-            else{
+            $firstName = $request->request->get('firstname');
+            $lastName = $request->request->get('lastname');
+            $userUsername = $request->request->get('username');
+            $userEmail = $request->request->get('email');
+            $userPassword = $request->request->get('password');
+            $userSex = $request->request->get('sex');
+            $userBirthday = \DateTime::createFromFormat('Y-m-d', $request->request->get('birthday'));
+            $userImage = $request->files->get('attachment');
+            if (!$userImage) {
+                $user->setAvatarImage($this->getParameter('brochures_directory') . "/default.jpg");
+            } else {
                 $fileName = $this->generateUniqueFileName() . '.' . $userImage->guessExtension();
                 $userImage->move(
                     $this->getParameter('brochures_directory'),
                     $fileName
                 );
-                $user->setAvatarImage($fileName);
+                $file = new File($this->getParameter('brochures_directory') . '/' . $fileName); //кастыль, для валидации картинки )00)
+                $user->setAvatarImage($file);
             }
             $user->setFirstname($firstName);
             $user->setLastname($lastName);
@@ -112,7 +114,7 @@ class RetroController extends Controller
             } else {
                 $em->persist($user);
                 $em->flush();
-                return new JsonResponse(array('type' => 'registration', 'error' => 'ok','id'=>$user->getId()));
+                return new JsonResponse(array('type' => 'registration', 'error' => 'ok', 'id' => $user->getId()));
             }
         }
         return new JsonResponse(array('type' => 'registration', 'error' => 'invalid arguments'));
@@ -137,45 +139,41 @@ class RetroController extends Controller
 //            }
 //        }
 //        return new JsonResponse(array('type' => 'registration', 'error' => 'invalid arguments'));
-        if($request->query->all()){
+        if ($request->query->all()) {
             $username = $request->query->get('username');
             $password = $request->query->get('password');
             $em = $this->getDoctrine()->getManager();
             $userManager = $em->getRepository(User::class);
-            $user = $userManager->findOneBy(['username'=>$username,'password'=>$password]);
-            if($user)
-            {
+            $user = $userManager->findOneBy(['username' => $username, 'password' => $password]);
+            if ($user) {
                 return new JsonResponse(array('type' => 'auth',
                     'error' => 'ok',
-                    'id'=>$user->getId(),
+                    'id' => $user->getId(),
                     'firstName' => $user->getFirstname(),
                     'lastName' => $user->getLastname(),
-                    ));
-            }
-            else{
+                ));
+            } else {
                 return new JsonResponse(array('type' => 'auth', 'error' => 'error'));
             }
         }
-        if($request->request->all()){
+        if ($request->request->all()) {
             $username = $request->request->get('username');
             $password = $request->request->get('password');
             $em = $this->getDoctrine()->getManager();
             $userManager = $em->getRepository(User::class);
-            $user = $userManager->findOneBy(['username'=>$username,'password'=>$password]);
-            if($user)
-            {
+            $user = $userManager->findOneBy(['username' => $username, 'password' => $password]);
+            if ($user) {
                 return new JsonResponse(array('type' => 'auth',
                     'error' => 'ok',
                     'firstName' => $user->getFirstname(),
                     'lastName' => $user->getLastname(),
-                    'id'=>$user->getId(),
+                    'id' => $user->getId(),
                 ));
-            }
-            else{
+            } else {
                 return new JsonResponse(array('type' => 'auth', 'error' => 'error'));
             }
         }
-        return new JsonResponse(array('type'=>'auth','error'=>'invalid arguments'));
+        return new JsonResponse(array('type' => 'auth', 'error' => 'invalid arguments'));
     }
 
     public function jsonErrors(string $type, ConstraintViolationList $errors)
@@ -186,6 +184,7 @@ class RetroController extends Controller
         }
         return $arr;
     }
+
     private function generateUniqueFileName()
     {
         // md5() reduces the similarity of the file names generated by
