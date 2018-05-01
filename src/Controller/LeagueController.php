@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Event;
 use App\Entity\League;
 use App\Entity\User;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -112,11 +113,29 @@ class LeagueController extends Controller
             $events = $league->getEvents();
             $descriptions = [];
             $indexes = [];
+            $amountOfLikes = [];
+            $isLiked = [];
+            $data = [];
+            $time = [];
+
             foreach ($events as $event) {
                 $descriptions[] = $event->getDescription();
                 $indexes[] = $event->getId();
+                $amountOfLikes[] = $event->getAmauntOfLike();
+                $isLiked[] = $event->isUserLike($user);
+                $data[] = $event->getDateOfEvent()->format('Y-m-d');
+                $time[] = $event->getDateOfEvent()->format('H:i:s');
             }
-            return new JsonResponse(array('role' => $roleOfUser,'index' => $indexes, 'description' => $descriptions));
+            return new JsonResponse(array(
+                'role' => $roleOfUser,
+                'index' => $indexes,
+                'description' => $descriptions,
+                'likeNumber' => $amountOfLikes,
+                'isLiked' => $isLiked,
+                'eventData' => $data,
+                'eventTime' => $time
+
+            ));
         } else {
             return new JsonResponse('Nothing');
         }
@@ -135,18 +154,36 @@ class LeagueController extends Controller
             $id = $request->query->get('userId');
         }
         if ($id != -1) {
+
             $em = $this->getDoctrine()->getManager();
             $user = $em->getRepository(User::class)->find($id);
             $events = $user->getAlreadyPlayedEvent();
             $leagues = [];
             $descriptions = [];
             $indexes = [];
+            $amountOfLikes = [];
+            $isLiked = [];
+            $data = [];
+            $time = [];
+
+            /**@var $event Event*/
             foreach ($events as $event) {
                 $leagues[] = $event->getTargetLeague()->getName();
                 $descriptions[] = $event->getDescription();
                 $indexes[] = $event->getId();
+                $amountOfLikes[] = $event->getAmauntOfLike();
+                $isLiked[] = $event->isUserLike($user);
+                $data[] = $event->getDateOfEvent()->format('Y-m-d');
+                $time[] = $event->getDateOfEvent()->format('H:i:s');
             }
-            return new JsonResponse(array('index' => $indexes, 'description' => $descriptions,'league'=>$leagues));
+            return new JsonResponse(array('index' => $indexes,
+                'description' => $descriptions,
+                'league'=>$leagues,
+                'likeNumber' => $amountOfLikes,
+                'isLiked' => $isLiked,
+                'eventData' => $data,
+                'eventTime' => $time
+            ));
         } else {
             return new JsonResponse('Nothing');
         }

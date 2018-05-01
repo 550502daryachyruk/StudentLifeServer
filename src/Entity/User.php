@@ -39,19 +39,21 @@ class User
     private $BoughtItems;
 
 
-
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="targetUsers")
      */
     private $alreadyPlayedEvent;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="userLiked")
+     * @ORM\JoinTable(name="user_event_like")
+     */
+    private $eventsLiked;
+
+    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Currency", mappedBy="users")
      */
     private $currencys;
-
-
-    private $willBePlayedEvent;
 
 
     /**
@@ -107,6 +109,8 @@ class User
      * @Assert\Image()
      */
     private $avatarImage;
+
+
 
     /**
      * @return mixed
@@ -375,6 +379,22 @@ class User
     public function setCurrencys($currencys): void
     {
         $this->currencys = $currencys;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEventsLiked()
+    {
+        return $this->eventsLiked;
+    }
+
+    /**
+     * @param mixed $eventsLiked
+     */
+    public function setEventsLiked($eventsLiked): void
+    {
+        $this->eventsLiked = $eventsLiked;
     }
 
 }
