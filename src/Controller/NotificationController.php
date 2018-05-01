@@ -47,15 +47,23 @@ class NotificationController extends Controller
             }
             $em->flush();
 
-
-            return new JsonResponse([
-                "answerMessage" => "ok",
-                "notificationTitle" => "tomorrow",
-                "notificationText" => "Will be ".$tempEvent->getTitle(),
-            ]);
+            if($event != null) {
+                return new JsonResponse([
+                    "answerMessage" => "ok",
+                    "notificationTitle" => "tomorrow",
+                    "notificationText" => "Will be " . $tempEvent->getTitle(),
+                ]);
+            }
+            else {
+                return new JsonResponse([
+                    "answerMessage" => "No notifications",
+                    "notificationTitle" => "",
+                    "notificationText" => "",
+                ]);
+            }
         }
         return new JsonResponse([
-            "answerMessage" => "not ok",
+            "answerMessage" => "This user don't live :(",
             "notificationTitle" => "",
             "notificationText" => "",
         ]);
