@@ -39,19 +39,27 @@ class User
     private $BoughtItems;
 
 
-
     /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="targetUsers")
      */
     private $alreadyPlayedEvent;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="creator")
+     * @ORM\JoinTable(name="creatorOfEvent")
+     */
+    private $createdEvent;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="userLiked")
+     * @ORM\JoinTable(name="user_event_like")
+     */
+    private $eventsLiked;
+
+    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Currency", mappedBy="users")
      */
     private $currencys;
-
-
-    private $willBePlayedEvent;
 
 
     /**
@@ -107,6 +115,8 @@ class User
      * @Assert\Image()
      */
     private $avatarImage;
+
+
 
     /**
      * @return mixed
@@ -322,6 +332,8 @@ class User
         $this->leaguesWhereUser= new \Doctrine\Common\Collections\ArrayCollection();
         $this->leaguesWhereAdmin= new \Doctrine\Common\Collections\ArrayCollection();
         $this->BoughtItems= new \Doctrine\Common\Collections\ArrayCollection();
+        $this->eventsLiked= new \Doctrine\Common\Collections\ArrayCollection();
+        $this->createdEvent = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -375,6 +387,60 @@ class User
     public function setCurrencys($currencys): void
     {
         $this->currencys = $currencys;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getEventsLiked()
+    {
+        return $this->eventsLiked;
+    }
+
+    /**
+     * @param mixed $eventsLiked
+     */
+    public function setEventsLiked($eventsLiked): void
+    {
+        $this->eventsLiked = $eventsLiked;
+    }
+
+    public function addEventsLiked($EventsLiked): void
+    {
+        $this->eventsLiked[] = $EventsLiked;
+    }
+    public function removeEventsLiked($EventsLiked): void
+    {
+        $this->eventsLiked->removeElement($EventsLiked);
+    }
+
+    public function isEventsLiked($EventsLiked): bool
+    {
+        return $this->eventsLiked->contains($EventsLiked);
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreatedEvent()
+    {
+        return $this->createdEvent;
+    }
+
+    /**
+     * @param mixed $createdEvent
+     */
+    public function setCreatedEvent($createdEvent): void
+    {
+        $this->createdEvent = $createdEvent;
+    }
+    public function addCreatedEvent($CreatedEvent): void
+    {
+        $this->createdEvent[] = $CreatedEvent;
+    }
+    public function removeCreatedEvent($CreatedEvent): void
+    {
+        $this->createdEvent->removeElement($CreatedEvent);
     }
 
 }

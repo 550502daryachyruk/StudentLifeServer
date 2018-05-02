@@ -124,6 +124,13 @@ class League
     {
         $this->admins = $admins;
     }
+    /**
+     * @param mixed $admins
+     */
+    public function addAdmin($admins): void
+    {
+        $this->admins[] = $admins;
+    }
 
     /**
      * @return mixed
@@ -175,6 +182,7 @@ class League
     public function __construct()
     {
         $this->Items = new ArrayCollection();
+        $this->admins = new ArrayCollection();
     }
 
     /**
