@@ -25,18 +25,22 @@ class LeagueController extends Controller
             $description = $request->request->get('description');
             $idParentLeague = $request->request->get('parentLeagueId');
             $nameOfCurrency = $request->request->get('nameOfCurrency');
+            $userId = $request->request->get('userId');
 //            $file = $request->files->get ( 'photo' );
 //            $fileName = md5 ( uniqid () ) . '.' . $file->guessExtension ();
-            if ($nameOfCurrency != null || $nameOfLeague != null && $description != null && $idParentLeague != null) {
+            if ($nameOfCurrency != null || $nameOfLeague != null && $description != null && $userId != null) {
                 $em = $this->getDoctrine()->getManager();
+                $user = $em->getRepository(User::class)->find($userId);
+                if($idParentLeague == null) {
+                    $idParentLeague = 1;
+                }
                 $league = new League();
                 $parent = $em->getRepository(League::class)->find($idParentLeague);
                 $league->setParentLeague($parent);
                 $league->setName($nameOfLeague);
                 $league->setDescription($description);
                 $league->setNameOfCurrency($nameOfCurrency);
-
-                $league->setAdmins($this->getUser());
+                $user->addLeaguesWhereAdmin($league);
                 $em->persist($league);
                 $em->flush();
              //   $league->setParentLeague($em->getRepository(League::class)->findOneBy(["name" => $parentLeague]));
