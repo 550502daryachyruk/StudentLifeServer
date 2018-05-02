@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\LeagueRepository")
@@ -64,6 +65,29 @@ class League
      * @ORM\OneToMany(targetEntity="App\Entity\Items", mappedBy="targetLeague")
      */
     private $Items;
+
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\Image()
+     */
+    private $avatarImage;
+
+    /**
+     * @return mixed
+     */
+    public function getAvatarImage()
+    {
+        return $this->avatarImage;
+    }
+
+    /**
+     * @param mixed $avatarImage
+     */
+    public function setAvatarImage($avatarImage): void
+    {
+        $this->avatarImage = $avatarImage;
+    }
+
 
 
 

@@ -116,8 +116,6 @@ class User
      */
     private $avatarImage;
 
-
-
     /**
      * @return mixed
      */

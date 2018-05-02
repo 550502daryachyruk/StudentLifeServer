@@ -5,6 +5,7 @@ namespace App\Entity;
 use Doctrine\ORM\Mapping as ORM;
 use Doctrine\ORM\Mapping\JoinColumn;
 use Symfony\Component\Validator\Constraints\Date;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EventRepository")
@@ -57,9 +58,27 @@ class Event
      */
     private $dateOfEvent;
 
+    /**
+     * @ORM\Column(type="string")
+     * @Assert\Image()
+     */
+    private $avatarImage;
 
+    /**
+     * @return mixed
+     */
+    public function getAvatarImage()
+    {
+        return $this->avatarImage;
+    }
 
-
+    /**
+     * @param mixed $avatarImage
+     */
+    public function setAvatarImage($avatarImage): void
+    {
+        $this->avatarImage = $avatarImage;
+    }
 
     /**
      * @return mixed
@@ -126,6 +145,12 @@ class Event
     {
         $this->targetUsers = $targetUsers;
     }
+
+    public function getAmauntOfUser(): int
+    {
+        return $this->targetUsers->count();
+    }
+
     public function __construct() {
         $this->targetUsers = new \Doctrine\Common\Collections\ArrayCollection();
         $this->userLiked = new \Doctrine\Common\Collections\ArrayCollection();
@@ -195,6 +220,22 @@ class Event
     public function setTitle($title): void
     {
         $this->title = $title;
+    }
+
+    /**
+     * @return mixed
+     */
+    public function getCreator()
+    {
+        return $this->creator;
+    }
+
+    /**
+     * @param mixed $creator
+     */
+    public function setCreator($creator)
+    {
+        $this->creator = $creator;
     }
     // add your own fields
 }
