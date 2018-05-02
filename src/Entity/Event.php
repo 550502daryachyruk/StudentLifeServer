@@ -31,6 +31,12 @@ class Event
     private $targetUsers;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="createdEvent")
+     * @ORM\JoinTable(name="creatorOfEvent")
+     */
+    private $creator;
+
+    /**
      * @ORM\Column(type="text")
      */
     private $description;

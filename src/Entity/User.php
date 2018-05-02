@@ -45,6 +45,12 @@ class User
     private $alreadyPlayedEvent;
 
     /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="creator")
+     * @ORM\JoinTable(name="creatorOfEvent")
+     */
+    private $createdEvent;
+
+    /**
      * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="userLiked")
      * @ORM\JoinTable(name="user_event_like")
      */
@@ -327,6 +333,7 @@ class User
         $this->leaguesWhereAdmin= new \Doctrine\Common\Collections\ArrayCollection();
         $this->BoughtItems= new \Doctrine\Common\Collections\ArrayCollection();
         $this->eventsLiked= new \Doctrine\Common\Collections\ArrayCollection();
+        $this->createdEvent = new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -412,7 +419,28 @@ class User
         return $this->eventsLiked->contains($EventsLiked);
     }
 
+    /**
+     * @return mixed
+     */
+    public function getCreatedEvent()
+    {
+        return $this->createdEvent;
+    }
 
-
+    /**
+     * @param mixed $createdEvent
+     */
+    public function setCreatedEvent($createdEvent): void
+    {
+        $this->createdEvent = $createdEvent;
+    }
+    public function addCreatedEvent($CreatedEvent): void
+    {
+        $this->createdEvent[] = $CreatedEvent;
+    }
+    public function removeCreatedEvent($CreatedEvent): void
+    {
+        $this->createdEvent->removeElement($CreatedEvent);
+    }
 
 }
