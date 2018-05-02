@@ -40,7 +40,7 @@ class Event
     private $title;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\User", inversedBy="eventsLiked")
+     * @ORM\ManyToMany(targetEntity="App\Entity\User", mappedBy="eventsLiked")
      * @ORM\JoinTable(name="user_event_like")
      *
      */

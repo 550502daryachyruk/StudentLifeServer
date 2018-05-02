@@ -45,7 +45,7 @@ class User
     private $alreadyPlayedEvent;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\Event", mappedBy="userLiked")
+     * @ORM\ManyToMany(targetEntity="App\Entity\Event", inversedBy="userLiked")
      * @ORM\JoinTable(name="user_event_like")
      */
     private $eventsLiked;
@@ -326,6 +326,7 @@ class User
         $this->leaguesWhereUser= new \Doctrine\Common\Collections\ArrayCollection();
         $this->leaguesWhereAdmin= new \Doctrine\Common\Collections\ArrayCollection();
         $this->BoughtItems= new \Doctrine\Common\Collections\ArrayCollection();
+        $this->eventsLiked= new \Doctrine\Common\Collections\ArrayCollection();
     }
 
     /**
@@ -396,5 +397,22 @@ class User
     {
         $this->eventsLiked = $eventsLiked;
     }
+
+    public function addEventsLiked($EventsLiked): void
+    {
+        $this->eventsLiked[] = $EventsLiked;
+    }
+    public function removeEventsLiked($EventsLiked): void
+    {
+        $this->eventsLiked->removeElement($EventsLiked);
+    }
+
+    public function isEventsLiked($EventsLiked): bool
+    {
+        return $this->eventsLiked->contains($EventsLiked);
+    }
+
+
+
 
 }

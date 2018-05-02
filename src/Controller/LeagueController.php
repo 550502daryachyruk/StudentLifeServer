@@ -98,17 +98,17 @@ class LeagueController extends Controller
             $em = $this->getDoctrine()->getManager();
             $league = $em->getRepository(League::class)->find($id);
             $user = $em->getRepository(User::class)->find($userId);
-            $roleOfUser = "user";
+            $roleOfUser = 0;
             foreach ($user->getLeaguesWhereUser() as $leag){
                 if($leag->getId() == $id){
-                    $roleOfUser = "subscriber";
+                    $roleOfUser = 2;
                     break;
                 }
             }
-            if($roleOfUser == "user") {
+            if($roleOfUser == 0) {
                 foreach ($user->getLeaguesWhereAdmin() as $leag) {
                     if ($leag->getId() == $id) {
-                        $roleOfUser = "admin";
+                        $roleOfUser = 3;
                         break;
                     }
                 }
@@ -270,6 +270,51 @@ class LeagueController extends Controller
             }
             else
                 return new JsonResponse(['answer' => "This user or league not found"]);
+        }
+        return new JsonResponse(['answer' => "Not enough parametres"]);
+    }
+
+    /**
+     * @Route("/api/likeIncrement")
+     */
+    public function inclementLike(Request $request)
+    {
+        $eventId = $request->request->get('eventId');
+        $userId = $request->request->get('userId');
+        if($userId != null && $eventId != null){
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->find($userId);
+            $event = $em->getRepository(Event::class)->find($eventId);
+            if(!$user->isEventsLiked($event)){
+                $user->addEventsLiked($event);
+            }
+            else{
+                return new JsonResponse(['answer' => "Already liked"]);
+            }
+            $em->flush();
+            return new JsonResponse(['answer' => "ok"]);
+        }
+        return new JsonResponse(['answer' => "Not enough parametres"]);
+    }
+    /**
+     * @Route("/api/likeDecrement")
+     */
+    public function decrementLike(Request $request)
+    {
+        $eventId = $request->request->get('eventId');
+        $userId = $request->request->get('userId');
+        if($userId != null && $eventId != null){
+            $em = $this->getDoctrine()->getManager();
+            $user = $em->getRepository(User::class)->find($userId);
+            $event = $em->getRepository(Event::class)->find($eventId);
+            if($user->isEventsLiked($event)){
+                $user->removeEventsLiked($event);
+            }
+            else{
+                return new JsonResponse(['answer' => "Not liked yet"]);
+            }
+            $em->flush();
+            return new JsonResponse(['answer' => "ok"]);
         }
         return new JsonResponse(['answer' => "Not enough parametres"]);
     }
